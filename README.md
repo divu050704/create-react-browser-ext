@@ -1,8 +1,4 @@
-Here’s a clean, professional **`README.md`** for your NPM CLI tool — with full usage instructions, folder structure, and notes on customization 
 
----
-
-````markdown
 # Create React Browser Extension CLI
 
 A powerful command-line tool to **generate Chrome extension boilerplates** with optional **TailwindCSS** or **Normal CSS** setups — for both **JavaScript** and **TypeScript**.
