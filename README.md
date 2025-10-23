@@ -1,10 +1,10 @@
----
+
 
 # Create React Browser Extension CLI
 
 A powerful command-line tool to generate a modern **React + Vite Chrome Extension boilerplate**, supporting both **JavaScript** and **TypeScript**, with optional **TailwindCSS** integration and built-in live reload for development.
 
----
+
 
 ## Features
 
@@ -19,7 +19,7 @@ A powerful command-line tool to generate a modern **React + Vite Chrome Extensio
 * Beautiful colored CLI output via `chalk`
 * Built using modern **ES Modules (type: module)**
 
----
+
 
 ## Installation
 
@@ -44,7 +44,7 @@ npm install
 npm link
 ```
 
----
+
 
 ## Usage
 
@@ -85,7 +85,7 @@ Next steps:
   npm run dev
 ```
 
----
+
 
 ## Project Structure
 
