@@ -1,31 +1,44 @@
+---
 
 # Create React Browser Extension CLI
 
-A powerful command-line tool to **generate Chrome extension boilerplates** with optional **TailwindCSS** or **Normal CSS** setups — for both **JavaScript** and **TypeScript**.
+A powerful command-line tool to generate a modern **React + Vite Chrome Extension boilerplate**, supporting both **JavaScript** and **TypeScript**, with optional **TailwindCSS** integration and built-in live reload for development.
 
 ---
 
 ## Features
 
-✅ Interactive CLI prompts (template + style + project name + description)  
-✅ Supports **JS** and **TS** boilerplates  
-✅ Choose between **Normal CSS** and **TailwindCSS** setups  
-✅ Automatically edits your `manifest.json` with project details  
-✅ Clean exit confirmation when pressing **Ctrl + C**  
-✅ Built using modern ES Modules (`type: module`)
+* Interactive CLI prompts for template, styling, and project info
+* Supports **JS** and **TS** boilerplates
+* Optional **TailwindCSS** setup
+* Automatically updates `manifest.json` with project details
+* Live reload for background, content, and popup scripts
+* **Vite-powered** development and builds
+* Includes custom reload server and plugins
+* Graceful Ctrl+C exit with confirmation
+* Beautiful colored CLI output via `chalk`
+* Built using modern **ES Modules (type: module)**
 
 ---
 
 ## Installation
 
+Global installation:
+
 ```bash
 npm install -g create-react-browser-ext
-````
+```
 
-Or for local development:
+Or run directly without installation:
 
 ```bash
-git clone https://github.com/yourusername/create-react-browser-ext
+npx create-react-browser-ext
+```
+
+For local development:
+
+```bash
+git clone https://github.com/divu050704/create-react-browser-ext
 cd create-react-browser-ext
 npm install
 npm link
@@ -41,9 +54,11 @@ Run the CLI anywhere in your terminal:
 create-react-browser-ext
 ```
 
-You’ll be guided through a series of prompts:
+You’ll be guided through setup prompts:
 
 ```
+Welcome to Chrome Extension Setup
+
 ? Choose a template: (Use arrow keys)
 > JS (JavaScript)
   TS (TypeScript)
@@ -56,113 +71,187 @@ You’ll be guided through a series of prompts:
 ? Project Description: My Chrome Extension
 ```
 
----
-
-## Folder Structure
+Once completed, you’ll see:
 
 ```
-create-react-browser-ext/
-├── bin/
-│   └── index.js               # CLI entry point
-├── utils/
-│   └── editManifest.js        # Manifest update utility
-├── templates/
-│   ├── js/
-│   │   ├── normalcss/
-│   │   │   └── extension/
-│   │   │       └── manifest.json
-│   │   └── tailwindcss/
-│   │       ├── extension/
-│   │       │   └── manifest.json
-│   │       └── tailwind.config.js
-│   └── ts/
-│       ├── normalcss/
-│       └── tailwindcss/
-├── package.json
-└── README.md
+Downloading template: chrome-react-ts-tailwind
+manifest.json updated successfully
+
+Project setup complete!
+
+Next steps:
+  cd my-chrome-extension
+  npm install
+  npm run dev
+```
+
+---
+
+## Project Structure
+
+After running the CLI, your generated project will look like this:
+
+```
+my-chrome-extension/
+│   .gitignore
+│   eslint.config.js
+│   index.html
+│   package-lock.json
+│   package.json
+│   README.md
+│   reload-server.js
+│   tsconfig.app.json
+│   tsconfig.json
+│   tsconfig.node.json
+│   vite.config.ts
+│
+├───extension
+│       icon.png
+│       manifest.json
+│
+├───plugins
+│       cleanMainFile.js
+│       reloadExtensionPlugin.js
+│       updatePopupPlugin.js
+│
+├───public
+│       vite.svg
+│
+└───src
+    │   App.css
+    │   App.tsx
+    │   chrome.d.ts
+    │   index.css
+    │   main.tsx
+    │   reload.js
+    │
+    ├───assets
+    │       react.svg
+    │
+    ├───background
+    │       background.js
+    │       handleReload.js
+    │
+    └───content
+            content.js
+            handleReload.js
+```
+
+### Folder Overview
+
+| Folder/File          | Description                                                           |
+| -------------------- | --------------------------------------------------------------------- |
+| **extension/**       | Contains the Chrome extension’s `manifest.json` and icons.            |
+| **src/**             | Contains the main React source files and extension scripts.           |
+| **src/background/**  | Background service scripts (reload logic, events).                    |
+| **src/content/**     | Content scripts injected into webpages.                               |
+| **plugins/**         | Custom Vite plugins for extension reload and build cleanup.           |
+| **reload-server.js** | Node server for handling live-reload WebSocket events.                |
+| **vite.config.ts**   | Main Vite configuration file for building and bundling the extension. |
+| **tsconfig*.json**   | TypeScript configuration files.                                       |
+| **public/**          | Static assets copied directly to the build folder.                    |
+
+---
+
+## Development
+
+To start the development server with live reload:
+
+```bash
+npm run dev
+```
+
+Then, open Chrome and go to:
+
+```
+chrome://extensions/
+```
+
+Click **“Load unpacked”** and select your project’s `/dev` or `/build` directory (depending on your setup).
+
+### Live Reload Triggers
+
+The extension reloads automatically when you modify:
+
+* Files inside `extension/`
+* Background scripts
+* Content scripts
+* React popup or UI code (`src/`)
+
+---
+
+## Production Build
+
+When you’re ready to publish your extension:
+
+```bash
+npm run build
+```
+
+Then, load the `/build` folder as an unpacked extension in Chrome:
+
+```
+chrome://extensions/
 ```
 
 ---
 
 ## How It Works
 
-1. **Prompts User Input** using [Inquirer.js](https://www.npmjs.com/package/inquirer)
-2. **Selects a Template Folder** from `/templates/<js|ts>/<style>/`
-3. **Copies Template Files** to your target directory using [fs-extra](https://www.npmjs.com/package/fs-extra)
-4. **Edits `manifest.json`** placeholders (`EXTENSION_NAME`, `EXTENSION_DESCRIPTION`)
-5. **Handles Ctrl + C Gracefully** — asks confirmation before exiting
+1. **Interactive CLI Prompts** via [Inquirer.js](https://www.npmjs.com/package/inquirer)
+2. **Template Download** using [degit](https://www.npmjs.com/package/degit)
+3. **Manifest Update** — replaces placeholders in `manifest.json`
+4. **Live Reload System** — integrates `reload-server.js` and Vite plugins
+5. **Clean Plugin System** — ensures efficient hot reload and clean builds
 
 ---
 
-## Example Manifest Placeholders
+## Templates Repository
 
-Each template should include a `manifest.json` like this:
+Templates are hosted at: [create-react-browser-ext-templates](https://github.com/divu050704/create-react-browser-ext-templates)
 
-```json
-{
-  "manifest_version": 3,
-  "name": "EXTENSION_NAME",
-  "description": "EXTENSION_DESCRIPTION",
-  "version": "1.0.0"
-}
-```
+Available branches:
 
-The CLI automatically replaces those placeholders with your inputs.
+* `chrome-react-js-normal`
+* `chrome-react-js-tailwind`
+* `chrome-react-ts-normal`
+* `chrome-react-ts-tailwind`
 
 ---
 
-## Exit Confirmation
+## Dependencies
 
-If you press **Ctrl + C** during setup, the CLI will ask:
+**Runtime:**
 
-```
-⚠️  Do you really want to exit?
-? Exit setup? (Y/n)
-```
+* `inquirer` – Interactive CLI prompts
+* `chalk` – Colored terminal output
+* `fs-extra` – File system utilities
+* `degit` – Fast template downloader
+* `update-notifier` – Version update alerts
 
-This ensures you don’t accidentally cancel your setup halfway.
+**Dev:**
 
----
-
-## Development
-
-To modify the CLI while testing locally:
-
-```bash
-npm link
-```
-
-Now you can run the CLI globally with:
-
-```bash
-create-react-browser-ext
-```
-
-When you’re done testing, unlink it:
-
-```bash
-npm unlink -g create-react-browser-ext
-```
+* `vite`
+* `typescript`
+* `eslint`
 
 ---
 
-## Adding New Templates
+## Future Enhancements
 
-To add your own template:
+* Firefox extension manifest support
+* Custom template registry
+* Support for Vue / Svelte
+* One-command publishing
+* Pre-configured CI/CD setups
 
-1. Create a folder under `/templates/js/` or `/templates/ts/`
-2. Inside that, create a subfolder:
+---
 
-   * `/normalcss/`
-   * `/tailwindcss/`
-3. Add files (`manifest.json`, `index.js`, etc.)
-4. Use `EXTENSION_NAME` and `EXTENSION_DESCRIPTION` placeholders where appropriate
+## Contributing
 
+1. Fork the repo
+2. Create a new branch
+3. Make your changes
+4. Submit a PR
 
-## Future Ideas
-
-* Add support for **React + Vite** boilerplates
-* Support **Firefox** extension manifest formats
-* Add **custom template registry** (user-defined templates)
-* Auto-install dependencies for Tailwind or React
 
