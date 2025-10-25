@@ -16,8 +16,7 @@ A powerful command-line tool to generate a modern **React + Vite Chrome Extensio
 * **Vite-powered** development and builds
 * Includes custom reload server and plugins
 * Graceful Ctrl+C exit with confirmation
-* Beautiful colored CLI output via `chalk`
-* Built using modern **ES Modules (type: module)**
+* Built using modern **ES Modules**
 
 
 
